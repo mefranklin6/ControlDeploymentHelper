@@ -4,7 +4,7 @@ import json
 
 
 #### Created by Matthew Franklin ###
-#### Please see www.github.com/mefranklin6 for license, readme, updates ###
+#### Please see https://github.com/mefranklin6/ControlDeploymentHelper/ ####
 
 # Execute this code on your computer, don't put it on the processor
 
