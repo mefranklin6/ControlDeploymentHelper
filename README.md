@@ -1,5 +1,5 @@
 # ControlDeploymentHelper
-FOSS 3rd Party tool to help Extron Authorized Programmers deploy systems using Control Script
+FOSS 3rd Party tool to help Extron Authorized Programmers deploy systems using Control Script.
 Not in any way affilated with Extron Corporation!
 
 # Reason:
