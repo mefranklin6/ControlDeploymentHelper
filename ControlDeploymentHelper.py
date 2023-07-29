@@ -22,7 +22,7 @@ RoomName = 'TestRoom1'
 
 # Default project descriptor JSON file location
 # !!!! IMPORTANT Do not have this in the root of your project file !!!!
-Default_JSON_File_Location = 'rfile/DEFAULT.json'
+Default_JSON_File_Location = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate/rfile/DEFAULT.json'
 
 Processor_IP = '192.168.253.250'
 TLP_IP = '192.168.253.8'
@@ -31,10 +31,9 @@ TLP_IP = '192.168.253.8'
 """
  instead of this manual dictionary of {Model : PartNumber},
  it could also be possible to script a login to the admin web interface
- and grab the part number there.
+ and grab the part number there (or login ssh/telnet)
  
- I wanted to keep web scraping to a mimimum, 
- and it also keeps passwords out of scripts,
+ I wanted to keep web scraping and passwords to a mimimum,
  hence the hardcoded dictionary below """
 
 
