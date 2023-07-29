@@ -3,7 +3,7 @@ FOSS 3rd Party tool to help Extron Authorized Programmers deploy systems using C
 Not in any way affilated with Extron Corporation!
 
 # Reason:
-I want to reduce the amount of manual work it takes to deploy or upgrade systems to the new Control Script with VS Code.  This is especially relevant when upgrading existing rooms from GCP to Control Script using a project file that accounts for variations (like the one Relensky made for my org!)
+I want to reduce the amount of manual work it takes to deploy or upgrade systems to the new Control Script with VS Code.  This is especially relevant when upgrading existing rooms from GCP to Control Script using a project file that accounts for hardware variations (like the one Relensky made for my org!)
 
 # v0.1 28 July 2023:
 Initial proof-of-concept work.  Only sets the part numbers for a single processor and single TLP, but it will be easy to expand the scope to most fields in the JSON Project Descriptor file.  Some of that may be personal taste, so modify this as you see fit, check back for updates, and submit pull requests!
