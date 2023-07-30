@@ -97,7 +97,7 @@ First_TLP_NameNumber = PairModelNameNumber(TLP_IP)
 
 # TODO: add support for multiple TLP's
 def GUI_Selector():
-    TLP_ModelNumberOnly = re.search(r'(\d{3})', First_TLP_NameNumber[0])
+    TLP_ModelNumberOnly = re.search(r'(\d{3,4})', First_TLP_NameNumber[0])
     GUI_Files = listdir(GUI_File_Directory)
     
     for GUI_File in GUI_Files:
