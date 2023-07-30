@@ -30,8 +30,8 @@ RoomName = 'TestRoom1'
 # !!!! IMPORTANT Do not have this in the root of your project file !!!!
 Default_JSON_File_Location = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate/rfile/DEFAULT.json'
 
-Processor_IP = '192.168.253.250'
-TLP_IP = '192.168.253.8'
+MainProcessor_IP = '192.168.253.250'
+First_TLP_IP = '192.168.253.8'
 
 
 """
@@ -89,8 +89,8 @@ def PairModelNameNumber(ip):
 
 
 
-MainProcessorModenNameNumber = PairModelNameNumber(Processor_IP)
-First_TLP_NameNumber = PairModelNameNumber(TLP_IP)
+MainProcessorNameNumber = PairModelNameNumber(MainProcessor_IP)
+First_TLP_NameNumber = PairModelNameNumber(First_TLP_IP)
 
 
 
@@ -116,7 +116,7 @@ MainProcessorDeviceFields = JSON_Data['devices'][0]
 
 #Set
 MainProcessorDeviceFields['name'] = f'{RoomName} - MainProcessor'
-MainProcessorDeviceFields['part_number'] = str(MainProcessorModenNameNumber[1])
+MainProcessorDeviceFields['part_number'] = str(MainProcessorNameNumber[1])
 # TODO: format MainProcessorNetworkFields based on if processor has AVLAN or just LAN
 
 
@@ -127,7 +127,7 @@ First_TLP_NetworkFields = First_TLP_DeviceFields['network']['interfaces']
 #Set
 First_TLP_DeviceFields['name'] = f'{RoomName} - MainTLP'
 First_TLP_DeviceFields['part_number'] = str(First_TLP_NameNumber[1])
-First_TLP_NetworkFields[0]['address'] = TLP_IP
+First_TLP_NetworkFields[0]['address'] = First_TLP_IP
 First_TLP_DeviceFields['ui']['layout_file'] = GUI_Selector()
 
 
