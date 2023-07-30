@@ -8,6 +8,24 @@ I want to reduce the amount of manual work it takes to deploy or upgrade systems
 # v0.1 28 July 2023:
 Initial proof-of-concept work.  Only sets the part numbers for a single processor and single TLP, but it will be easy to expand the scope to most fields in the JSON Project Descriptor file.  Some of that may be personal taste, so modify this as you see fit, check back for updates, and submit pull requests!
 
+# v0.2 30 July 2023:
+Script now sets:
+- Main Processor Name
+- Main Processor Part#
+- First TLP Name
+- First TLP Part#
+- First TLP IP Address
+- First TLP .gdl GUI File
+
+# Roadmap:
+- Add support for multiple processors per room
+- Add support for multiple TLP's per room
+- Remove user variables from .py script and add it to a config file (I like YAML), or maybe a simple GUI
+- Add processor IP address(es) (need to handle processors with just LAN vs those with LAN and AVLAN)
+- Error and Exception handling
+- Log information to CSV?
+- Let me know if you would like to see anything additional!  
+
 # Instructions:
 Assuming you are deploying new systems or upgrading existing rooms:
 1. Get your Extron devices on the network and get their IP's (get your computer on the same network too)
