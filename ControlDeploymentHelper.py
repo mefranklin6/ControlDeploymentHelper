@@ -1,10 +1,11 @@
 import requests
 import re
 import json
+from os import listdir
 
 
 #### Created by Matthew Franklin ###
-#### Please see https://github.com/mefranklin6/ControlDeploymentHelper/ ####
+#### Please see www.github.com/mefranklin6 for license, readme, updates ###
 
 # Execute this code on your computer, don't put it on the processor
 
@@ -17,7 +18,12 @@ import json
 # ex: 'C:/Users/<YOURUSER>/Documents/<PROJECTFOLDERNAME>'
 ProjectRootDirectory = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate'
 
-# becomes your project descriptor JSON file name
+# Directory of your GUI Files.
+# Make sure the model number of the TLP is in the file name ex: 'ClientName_525M.gdl'
+# Make sure there's only one file per TLP model in the directory
+GUI_File_Directory = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate/layout'
+
+# Names your project descriptor file, processors, and TLP's
 RoomName = 'TestRoom1' 
 
 # Default project descriptor JSON file location
@@ -79,6 +85,24 @@ def PairModelNameNumber(ip):
     if ModelName in TLP_Models.keys():
         ModelNumber = TLP_Models[ModelName]
         return (ModelName, ModelNumber)
+    
+
+
+
+MainProcessorModenNameNumber = PairModelNameNumber(Processor_IP)
+First_TLP_NameNumber = PairModelNameNumber(TLP_IP)
+
+
+
+
+# TODO: add support for multiple TLP's
+def GUI_Selector():
+    TLP_ModelNumberOnly = re.search(r'(\d{3})', First_TLP_NameNumber[0])
+    GUI_Files = listdir(GUI_File_Directory)
+    
+    for GUI_File in GUI_Files:
+        if TLP_ModelNumberOnly[1] in GUI_File:
+            return GUI_File
 
 
 
@@ -87,12 +111,27 @@ with open(Default_JSON_File_Location, 'r') as DefaultJSON_File:
     JSON_Data = json.load(DefaultJSON_File)
 
 
-# field for main processor part number
-JSON_Data['devices'][0]['part_number'] = str(PairModelNameNumber(Processor_IP)[1])
+# Read
+MainProcessorDeviceFields = JSON_Data['devices'][0]
+
+#Set
+MainProcessorDeviceFields['name'] = f'{RoomName} - MainProcessor'
+MainProcessorDeviceFields['part_number'] = str(MainProcessorModenNameNumber[1])
+# TODO: format MainProcessorNetworkFields based on if processor has AVLAN or just LAN
 
 
-# field for first TLP part number
-JSON_Data['devices'][1]['part_number'] = str(PairModelNameNumber(TLP_IP)[1])
+# Read
+First_TLP_DeviceFields = JSON_Data['devices'][1]
+First_TLP_NetworkFields = First_TLP_DeviceFields['network']['interfaces']
+
+#Set
+First_TLP_DeviceFields['name'] = f'{RoomName} - MainTLP'
+First_TLP_DeviceFields['part_number'] = str(First_TLP_NameNumber[1])
+First_TLP_NetworkFields[0]['address'] = TLP_IP
+First_TLP_DeviceFields['ui']['layout_file'] = GUI_Selector()
+
+
+
 
 #TODO: add the rest of the fields as they make sense, such as IP addresses and whatnot
 
