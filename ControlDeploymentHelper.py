@@ -103,6 +103,10 @@ def GUI_Selector():
     for GUI_File in GUI_Files:
         if TLP_ModelNumberOnly[1] in GUI_File:
             return GUI_File
+	
+	if len(GUI_Files) == 1:
+		return GUI_Files[0]
+		
 
 
 
