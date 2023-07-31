@@ -14,6 +14,23 @@ from os import listdir
 # Begin User Variables
 ###############################################################################
 
+
+
+#### Commonly Changed Variables ####
+
+# Names your project descriptor file, processors, and TLP's
+SystemName = 'TestRoom1' 
+
+MainProcessor_IP = '192.168.253.250'
+MainProcessor_AVLAN_IP = '192.168.254.250'
+
+First_TLP_IP = '192.168.253.8'
+Second_TLP_IP = '' # Leave empty string if none
+
+####################################
+
+
+#### Setup Variables ####
 # Root directory of the project on your computer
 # ex: 'C:/Users/<YOURUSER>/Documents/<PROJECTFOLDERNAME>'
 ProjectRootDirectory = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate'
@@ -23,19 +40,12 @@ ProjectRootDirectory = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate'
 # Make sure there's only one file per TLP model in the directory
 GUI_File_Directory = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate/layout'
 
-# Names your project descriptor file, processors, and TLP's
-RoomName = 'TestRoom1' 
-
 # Default project descriptor JSON file location
 # !!!! IMPORTANT Do not have this in the root of your project file !!!!
 Default_JSON_File_Location = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate/rfile/DEFAULT.json'
 
-MainProcessor_IP = '192.168.253.250'
-MainProcessor_AVLAN_IP = '192.168.254.250'
 
-First_TLP_IP = '192.168.253.8'
-Second_TLP_IP = '10.248.132.101' #placeholder
-
+#### Backend Variables ####
 
 """
  instead of this manual dictionary of {Model : PartNumber},
@@ -44,7 +54,6 @@ Second_TLP_IP = '10.248.132.101' #placeholder
  
  I wanted to keep web scraping and passwords to a mimimum,
  hence the hardcoded dictionary below """
-
 
 ProcessorModels = {
                     'IPCP Pro 355MQ xi' : '60-1919-01',
@@ -187,8 +196,10 @@ with open(Default_JSON_File_Location, 'r') as DefaultJSON_File:
     JSON_Data = json.load(DefaultJSON_File)
 
 
+JSON_Data['system']['name'] = SystemName
+
 # Set Main Processor
-JSON_Data['devices'][0]['name'] = f'{RoomName} - MainProcessor'
+JSON_Data['devices'][0]['name'] = f'{SystemName} - MainProcessor'
 JSON_Data['devices'][0]['part_number'] = MainProcessor.part_number
 JSON_Data['devices'][0]['network']['interfaces'][0]['address'] = MainProcessor.address
 
@@ -199,13 +210,13 @@ else:
 
 
 # Set TLP('s)
-JSON_Data['devices'][1]['name'] = f'{RoomName} - MainTLP'
+JSON_Data['devices'][1]['name'] = f'{SystemName} - MainTLP'
 JSON_Data['devices'][1]['part_number'] = First_TLP.part_number
 JSON_Data['devices'][1]['network']['interfaces'][0]['address'] = First_TLP.address
 JSON_Data['devices'][1]['ui']['layout_file'] = First_TLP.layout_file
 
 if Second_TLP_Exist:
-    JSON_Data['devices'][2]['name'] = f'{RoomName} - SecondTLP'
+    JSON_Data['devices'][2]['name'] = f'{SystemName} - SecondTLP'
     JSON_Data['devices'][2]['part_number'] = Second_TLP.part_number
     JSON_Data['devices'][2]['network']['interfaces'][0]['address'] = Second_TLP.address
     JSON_Data['devices'][2]['ui']['layout_file'] = Second_TLP.layout_file
@@ -214,5 +225,5 @@ else:
     del(JSON_Data['devices'][2]) # if no second TLP
 
 
-with open(f'{ProjectRootDirectory}/{RoomName}.json', 'w') as New_JSON_File:
+with open(f'{ProjectRootDirectory}/{SystemName}.json', 'w') as New_JSON_File:
     json.dump(JSON_Data, New_JSON_File)
