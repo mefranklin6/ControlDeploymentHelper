@@ -79,7 +79,6 @@ AVLAN_Processors = [
                     'IPCP Pro 355MQ xi', #built in 1808
                     'IPCP Pro 355DRQ xi',
                     'IPCP Pro 555Q xi'
-                    #TODO: confirm this is all models.  (Built-in ones are tricky)
 ]
 
 
@@ -113,6 +112,11 @@ class MainProcessor(Processor):
 class First_TLP(TLP):
     address = First_TLP_IP
 
+Second_TLP_Exist = False
+if Second_TLP_IP is not None and Second_TLP_IP != '':
+    Second_TLP_Exist = True
+    class Second_TLP(TLP):
+        address = Second_TLP_IP
 
 
 
@@ -164,9 +168,18 @@ MainProcessor.Has_AVLAN = DecideProcessorNetworks(MainProcessor.model_name)
 if MainProcessor.Has_AVLAN == True:
     print('Processor has AVLAN') # placeholder
 
-First_TLP.model_name = ExtractModelName(First_TLP.address)
-First_TLP.part_number = GetPartNumber(First_TLP.model_name)
-First_TLP.layout_file = GUI_Selector(First_TLP.model_name)
+
+def Set_TLP_ClassAttributes(tlp_sublass):
+    tlp_sublass.model_name = ExtractModelName(tlp_sublass.address)
+    tlp_sublass.part_number = GetPartNumber(tlp_sublass.model_name)
+    tlp_sublass.layout_file = GUI_Selector(tlp_sublass.model_name)
+
+    
+Set_TLP_ClassAttributes(First_TLP)
+if Second_TLP_Exist:
+    Set_TLP_ClassAttributes(Second_TLP)
+
+
 
 
 with open(Default_JSON_File_Location, 'r') as DefaultJSON_File:
@@ -179,7 +192,7 @@ MainProcessorDeviceFields = JSON_Data['devices'][0]
 #Set
 MainProcessorDeviceFields['name'] = f'{RoomName} - MainProcessor'
 MainProcessorDeviceFields['part_number'] = MainProcessor.part_number
-# TODO: format MainProcessorNetworkFields based on if processor has AVLAN or just LAN
+# TODO: MainProcessorNetworkFields based on if processor has AVLAN or just LAN
 
 
 # Read
@@ -192,7 +205,8 @@ First_TLP_DeviceFields['part_number'] = First_TLP.part_number
 First_TLP_NetworkFields[0]['address'] = First_TLP.address
 First_TLP_DeviceFields['ui']['layout_file'] = First_TLP.layout_file
 
-#TODO: Processor LAN inc AVLAN if applicable
+if Second_TLP_Exist:
+    pass #TODO: handle second TLP JSON
 
 
 with open(f'{ProjectRootDirectory}/{RoomName}.json', 'w') as New_JSON_File:
