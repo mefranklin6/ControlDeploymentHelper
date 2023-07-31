@@ -1,0 +1,82 @@
+{
+    "schemaVersion": "1.0.0",
+    "system": {
+        "name": "",
+        "code_folder_path": "src",
+        "code_entry_file": "main.py",
+        "layout_folder_path": "layout",
+        "rfile_folder_path": "rfile",
+        "irfile_folder_path": "ir",
+        "sound_folder_path": "sound",
+        "system_id": "4836",
+        "author": {
+            "name": "",
+            "email": ""
+        },
+        "version": "1.0.706",
+        "primary_device_alias": "MainProcessor"
+    },
+    "devices": [
+        {
+            "name": "",
+            "part_number": "",
+            "alias": "MainProcessor",
+            "network": {
+                "interfaces": [
+                    {
+                        "address": "",
+                        "type": "LAN"
+                    },
+                    {
+                        "address": "",
+                        "type": "AVLAN"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "",
+            "part_number": "",
+            "alias": "PrimaryTLP",
+            "network": {
+                "host_network_type": "LAN",
+                "interfaces": [
+                    {
+                        "address": ""
+                    }
+                ]
+            },
+            "ui": {
+                "layout_file": "",
+                "enable_click_sound": true,
+                "click_sound_file": "Touch.wav",
+                "press_feedback": "none",
+                "thumb_change_report_interval": 0.1,
+                "thumb_to_fill_sync_time": 0.5
+            },
+            "extron_control_web_id": "ui"
+        },
+        {
+            "name": "",
+            "part_number": "",
+            "alias": "MirrorTLP",
+            "network": {
+                "host_network_type": "LAN",
+                "interfaces": [
+                    {
+                        "address": ""
+                    }
+                ]
+            },
+            "ui": {
+                "layout_file": "",
+                "enable_click_sound": true,
+                "click_sound_file": "Touch.wav",
+                "press_feedback": "none",
+                "thumb_change_report_interval": 0.1,
+                "thumb_to_fill_sync_time": 0.5
+            },
+            "extron_control_web_id": "mirror_ui"
+        }
+    ]
+}
