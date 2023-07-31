@@ -126,10 +126,8 @@ def GetPartNumber(model_name):
     
     if model_name in TLP_Models.keys():
         model_number = TLP_Models[model_name]
-        return (model_number)
+        return model_number
     
-
-
 
 def GUI_Selector(tlp_model_name):
     TLP_ModelNumberOnly = re.search(r'(\d{3,4})', tlp_model_name)
@@ -147,7 +145,6 @@ def DecideProcessorNetworks (processor_model_name):
     for AVLAN_Processor in AVLAN_Processors:
         if processor_model_name in AVLAN_Processor:
             return True
-    #return False
 
 
 # Function calls, load attributes into classes
@@ -160,6 +157,7 @@ if MainProcessor.Has_AVLAN == True:
 First_TLP.model_name = ExtractModelName(First_TLP.address)
 First_TLP.part_number = GetPartNumber(First_TLP.model_name)
 First_TLP.layout_file = GUI_Selector(First_TLP.model_name)
+
 
 with open(Default_JSON_File_Location, 'r') as DefaultJSON_File:
     JSON_Data = json.load(DefaultJSON_File)
