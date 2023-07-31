@@ -48,12 +48,22 @@ Second_TLP_IP = '' #placeholder
 
 ProcessorModels = {
                     'IPCP Pro 355MQ xi' : '60-1919-01',
-                    'some other model' : '11-1111-11',
+                    'IPCP Pro 550' : '60-1418-01',
+                    'IPCP Pro 550 xi' : '60-1913-01A',
+                    'IPCP Pro 555Q xi' : '60-1917-01A',
+                    'IPCP Pro 555' : '60-1434-01',
+                    'IPCP Pro S6' : '60-1414-01',
+                    'IPCP Pro 250' : '60-1429-01',
+                    'IPCP Pro 350' : '60-1417-01',
 }
 
 TLP_Models = {
                     'TLP Pro 525M' : '60-1561-02',
-                    'some other tlp' : '22-2222-22',
+                    'TLP Pro 525T' : '60-1559-02',
+                    'TLP Pro 725M' : '60-1563-02',
+                    'TLP Pro 725T' : '60-1562-02',
+                    'TLP PRO 1025T' : '60-1565-02',
+                    'TLP PRO 1025M' : '60-1566-02',
 }
 
 
