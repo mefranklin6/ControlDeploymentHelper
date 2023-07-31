@@ -31,7 +31,10 @@ RoomName = 'TestRoom1'
 Default_JSON_File_Location = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate/rfile/DEFAULT.json'
 
 MainProcessor_IP = '192.168.253.250'
+MainProcessor_AVLAN_IP = '' #placholder
+
 First_TLP_IP = '192.168.253.8'
+Second_TLP_IP = '' #placeholder
 
 
 """
@@ -54,11 +57,51 @@ TLP_Models = {
 }
 
 
+# Models with both LAN and AVLAN
+AVLAN_Processors = [ 
+                    'IPCP Pro 255',
+                    'IPCP Pro 350',
+                    'IPCP Pro 355',
+                    'IPCP Pro 360',
+                    'IPCP Pro 555',
+                    'IPCP Pro 255Q xi',
+                    'IPCP Pro 350 xi',
+                    'IPCP Pro 355MQ xi', #built in 1808
+                    'IPCP Pro 355DRQ xi',
+                    'IPCP Pro 555Q xi'
+                    #TODO: confirm this is all models.  (Built-in ones are tricky)
+]
+
+
 
 
 ###############################################################################
 # End User Variables
 ###############################################################################
+
+
+
+# Parent classes
+class Processor:
+    address = ''
+    AVLAN_address = ''
+    model_name = ''
+    part_number = ''
+    Has_AVLAN = bool
+
+class TLP:
+    address = ''
+    model_name = ''
+    part_number = ''
+    layout_file = ''
+
+
+# Subclasses
+class MainProcessor(Processor):
+    address = MainProcessor_IP
+
+class First_TLP(TLP):
+    address = First_TLP_IP
 
 
 
@@ -75,41 +118,48 @@ def ExtractModelName(ip):
     return DeviceModel
 
 
-def PairModelNameNumber(ip):
-    ModelName = ExtractModelName(ip)
+def GetPartNumber(model_name):
 
-    if ModelName in ProcessorModels.keys():
-        ModelNumber = ProcessorModels[ModelName]
-        return (ModelName, ModelNumber)
+    if model_name in ProcessorModels.keys():
+        model_number = ProcessorModels[model_name]
+        return model_number
     
-    if ModelName in TLP_Models.keys():
-        ModelNumber = TLP_Models[ModelName]
-        return (ModelName, ModelNumber)
+    if model_name in TLP_Models.keys():
+        model_number = TLP_Models[model_name]
+        return (model_number)
     
 
 
 
-MainProcessorNameNumber = PairModelNameNumber(MainProcessor_IP)
-First_TLP_NameNumber = PairModelNameNumber(First_TLP_IP)
-
-
-
-
-# TODO: add support for multiple TLP's
-def GUI_Selector():
-    TLP_ModelNumberOnly = re.search(r'(\d{3,4})', First_TLP_NameNumber[0])
+def GUI_Selector(tlp_model_name):
+    TLP_ModelNumberOnly = re.search(r'(\d{3,4})', tlp_model_name)
     GUI_Files = listdir(GUI_File_Directory)
     
     for GUI_File in GUI_Files:
         if TLP_ModelNumberOnly[1] in GUI_File:
             return GUI_File
 	
-	if len(GUI_Files) == 1:
-		return GUI_Files[0]
+    if len(GUI_Files) == 1:
+        return GUI_Files[0]
 		
 
+def DecideProcessorNetworks (processor_model_name):
+    for AVLAN_Processor in AVLAN_Processors:
+        if processor_model_name in AVLAN_Processor:
+            return True
+    #return False
 
 
+# Function calls, load attributes into classes
+MainProcessor.model_name = ExtractModelName(MainProcessor.address)
+MainProcessor.part_number = GetPartNumber(MainProcessor.model_name)
+MainProcessor.Has_AVLAN = DecideProcessorNetworks(MainProcessor.model_name)
+if MainProcessor.Has_AVLAN == True:
+    print('Processor has AVLAN') # placeholder
+
+First_TLP.model_name = ExtractModelName(First_TLP.address)
+First_TLP.part_number = GetPartNumber(First_TLP.model_name)
+First_TLP.layout_file = GUI_Selector(First_TLP.model_name)
 
 with open(Default_JSON_File_Location, 'r') as DefaultJSON_File:
     JSON_Data = json.load(DefaultJSON_File)
@@ -120,7 +170,7 @@ MainProcessorDeviceFields = JSON_Data['devices'][0]
 
 #Set
 MainProcessorDeviceFields['name'] = f'{RoomName} - MainProcessor'
-MainProcessorDeviceFields['part_number'] = str(MainProcessorNameNumber[1])
+MainProcessorDeviceFields['part_number'] = MainProcessor.part_number
 # TODO: format MainProcessorNetworkFields based on if processor has AVLAN or just LAN
 
 
@@ -130,14 +180,11 @@ First_TLP_NetworkFields = First_TLP_DeviceFields['network']['interfaces']
 
 #Set
 First_TLP_DeviceFields['name'] = f'{RoomName} - MainTLP'
-First_TLP_DeviceFields['part_number'] = str(First_TLP_NameNumber[1])
-First_TLP_NetworkFields[0]['address'] = First_TLP_IP
-First_TLP_DeviceFields['ui']['layout_file'] = GUI_Selector()
+First_TLP_DeviceFields['part_number'] = First_TLP.part_number
+First_TLP_NetworkFields[0]['address'] = First_TLP.address
+First_TLP_DeviceFields['ui']['layout_file'] = First_TLP.layout_file
 
-
-
-
-#TODO: add the rest of the fields as they make sense, such as IP addresses and whatnot
+#TODO: Processor LAN inc AVLAN if applicable
 
 
 with open(f'{ProjectRootDirectory}/{RoomName}.json', 'w') as New_JSON_File:
