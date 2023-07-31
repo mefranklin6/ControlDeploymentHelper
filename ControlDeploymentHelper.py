@@ -2,6 +2,7 @@ import requests
 import re
 import json
 from os import listdir
+from random import randrange
 
 
 #### Created by Matthew Franklin ###
@@ -19,7 +20,7 @@ from os import listdir
 #### Commonly Changed Variables ####
 
 # Names your project descriptor file, processors, and TLP's
-SystemName = 'TestRoom1' 
+SystemName = 'TestRoom2' 
 
 MainProcessor_IP = '192.168.253.250'
 MainProcessor_AVLAN_IP = '192.168.254.250'
@@ -197,6 +198,7 @@ with open(Default_JSON_File_Location, 'r') as DefaultJSON_File:
 
 
 JSON_Data['system']['name'] = SystemName
+JSON_Data['system']['system_id'] = str(randrange(1000, 9999))
 
 # Set Main Processor
 JSON_Data['devices'][0]['name'] = f'{SystemName} - MainProcessor'
