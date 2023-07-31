@@ -31,10 +31,10 @@ RoomName = 'TestRoom1'
 Default_JSON_File_Location = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate/rfile/DEFAULT.json'
 
 MainProcessor_IP = '192.168.253.250'
-MainProcessor_AVLAN_IP = '' #placholder
+MainProcessor_AVLAN_IP = '192.168.254.250'
 
 First_TLP_IP = '192.168.253.8'
-Second_TLP_IP = '' #placeholder
+Second_TLP_IP = '10.248.132.101' #placeholder
 
 
 """
@@ -62,8 +62,8 @@ TLP_Models = {
                     'TLP Pro 525T' : '60-1559-02',
                     'TLP Pro 725M' : '60-1563-02',
                     'TLP Pro 725T' : '60-1562-02',
-                    'TLP PRO 1025T' : '60-1565-02',
-                    'TLP PRO 1025M' : '60-1566-02',
+                    'TLP Pro 1025T' : '60-1565-02',
+                    'TLP Pro 1025M' : '60-1566-02',
 }
 
 
@@ -119,7 +119,6 @@ if Second_TLP_IP is not None and Second_TLP_IP != '':
         address = Second_TLP_IP
 
 
-
 def ScrapeWebInterface(ip):
     HTTP = requests.get(f'https://{ip}/www/index.html', verify=False)
     return HTTP.text
@@ -141,6 +140,8 @@ def GetPartNumber(model_name):
     if model_name in TLP_Models.keys():
         model_number = TLP_Models[model_name]
         return model_number
+    else:
+        print(f'Can not find TLP Part Number for {model_name}')
     
 
 def GUI_Selector(tlp_model_name):
@@ -166,7 +167,7 @@ MainProcessor.model_name = ExtractModelName(MainProcessor.address)
 MainProcessor.part_number = GetPartNumber(MainProcessor.model_name)
 MainProcessor.Has_AVLAN = DecideProcessorNetworks(MainProcessor.model_name)
 if MainProcessor.Has_AVLAN == True:
-    print('Processor has AVLAN') # placeholder
+    MainProcessor.AVLAN_address = MainProcessor_AVLAN_IP
 
 
 def Set_TLP_ClassAttributes(tlp_sublass):
@@ -186,27 +187,31 @@ with open(Default_JSON_File_Location, 'r') as DefaultJSON_File:
     JSON_Data = json.load(DefaultJSON_File)
 
 
-# Read
-MainProcessorDeviceFields = JSON_Data['devices'][0]
+# Set Main Processor
+JSON_Data['devices'][0]['name'] = f'{RoomName} - MainProcessor'
+JSON_Data['devices'][0]['part_number'] = MainProcessor.part_number
+JSON_Data['devices'][0]['network']['interfaces'][0]['address'] = MainProcessor.address
 
-#Set
-MainProcessorDeviceFields['name'] = f'{RoomName} - MainProcessor'
-MainProcessorDeviceFields['part_number'] = MainProcessor.part_number
-# TODO: MainProcessorNetworkFields based on if processor has AVLAN or just LAN
+if MainProcessor.Has_AVLAN == True:
+    JSON_Data['devices'][0]['network']['interfaces'][1]['address'] = MainProcessor.AVLAN_address
+else:
+    del(JSON_Data['devices'][0]['interfaces'][1]) # if no AVLAN
 
 
-# Read
-First_TLP_DeviceFields = JSON_Data['devices'][1]
-First_TLP_NetworkFields = First_TLP_DeviceFields['network']['interfaces']
-
-#Set
-First_TLP_DeviceFields['name'] = f'{RoomName} - MainTLP'
-First_TLP_DeviceFields['part_number'] = First_TLP.part_number
-First_TLP_NetworkFields[0]['address'] = First_TLP.address
-First_TLP_DeviceFields['ui']['layout_file'] = First_TLP.layout_file
+# Set TLP('s)
+JSON_Data['devices'][1]['name'] = f'{RoomName} - MainTLP'
+JSON_Data['devices'][1]['part_number'] = First_TLP.part_number
+JSON_Data['devices'][1]['network']['interfaces'][0]['address'] = First_TLP.address
+JSON_Data['devices'][1]['ui']['layout_file'] = First_TLP.layout_file
 
 if Second_TLP_Exist:
-    pass #TODO: handle second TLP JSON
+    JSON_Data['devices'][2]['name'] = f'{RoomName} - SecondTLP'
+    JSON_Data['devices'][2]['part_number'] = Second_TLP.part_number
+    JSON_Data['devices'][2]['network']['interfaces'][0]['address'] = Second_TLP.address
+    JSON_Data['devices'][2]['ui']['layout_file'] = Second_TLP.layout_file
+
+else:
+    del(JSON_Data['devices'][2]) # if no second TLP
 
 
 with open(f'{ProjectRootDirectory}/{RoomName}.json', 'w') as New_JSON_File:
