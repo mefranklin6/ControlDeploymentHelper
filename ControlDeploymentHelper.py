@@ -208,7 +208,7 @@ JSON_Data['devices'][0]['network']['interfaces'][0]['address'] = MainProcessor.a
 if MainProcessor.Has_AVLAN == True:
     JSON_Data['devices'][0]['network']['interfaces'][1]['address'] = MainProcessor.AVLAN_address
 else:
-    del(JSON_Data['devices'][0]['interfaces'][1]) # if no AVLAN
+    del(JSON_Data['devices'][0]['network']['interfaces'][1]) # if no AVLAN
 
 
 # Set TLP('s)
