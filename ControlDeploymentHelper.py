@@ -62,7 +62,7 @@ ProcessorModels = {
                     'IPCP Pro 550 xi' : '60-1913-01A',
                     'IPCP Pro 555Q xi' : '60-1917-01A',
                     'IPCP Pro 555' : '60-1434-01',
-                    'IPCP Pro S6' : '60-1414-01',
+                    'IPL Pro S6' : '60-1414-01',
                     'IPCP Pro 250' : '60-1429-01',
                     'IPCP Pro 350' : '60-1417-01',
 }
