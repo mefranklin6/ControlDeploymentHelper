@@ -6,8 +6,9 @@ The tool simply takes the IP addresses of your already deployed Extron equipment
 If you only have one processor and one or two TLP's, this script will likely fill in all fields for you.
 If your system is more complex than the above, this will at least get your started and keep manual entry to a minimum.
 
+
 # Reason:
-I want to reduce the amount of manual work it takes to deploy or upgrade systems to the new Control Script with VS Code.  This is especially relevant when upgrading existing rooms from GCP to Control Script using a project file that accounts for hardware variations (like the one Relensky made for my org!)
+Reduction in manual work when deploying new ECS systems or upgrading systems from GCP.
 
 # v1.0b 31 July 2023: Beta
 - Base functionalitly is feature complete
@@ -24,5 +25,17 @@ Assuming you are deploying new systems or upgrading existing rooms:
 
 # Common Errors
 No part number found?  Make sure your device and part number are present in the dictionary in User Variables.
+
+# End Goal / Big Picture
+This can be combined with additional tools for an almost one-click automated deployment as long as you have good documentation of what devices and IP's are in your systems.  My workflow includes internal tools that I wrote that are extremely specific to my org's enviroment and likely little use here, but the overview is:
+
+- Internal tool to parse a device database that includes device IP, location and loosely what model and type the devices are
+- Internal tool that matches devices per location to their IP's and matches devices in the database to supported devices in the ECS main.py
+- Internal tool that writes a config.json file with device information that the main processor program looks at
+- This tool to bootstrap the main processor and TLP(s) config, with the IP's filled in by the previous tool
+- CSDU where you have to manually enter device credentials, certify, and deploy 
+- Internal tool that loads the config.json onto the processor and re-initializes so it has the (usually mostly) correct config
+- Manual confirmation of the system operation and fine-tuning in the room.  Overall, about 80% of the work is automated!
+
 
 Pull requests welcome.  Integration into CSDU also welcome!
