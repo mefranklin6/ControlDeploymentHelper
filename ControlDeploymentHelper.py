@@ -104,8 +104,8 @@ def ScrapeWebInterface(ip):
     return HTTP.text
 
 
-def ExtractModelName(ip, call_type):
-    HTTP = ScrapeWebInterface(ip, call_type)
+def ExtractModelName(ip):
+    HTTP = ScrapeWebInterface(ip)
     HTTPSearch = re.search(r'var device_name =(.*?);', HTTP)
     DeviceModel = HTTPSearch.group(1).strip().replace('"', '')
     return DeviceModel
