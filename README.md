@@ -12,11 +12,8 @@ I want to reduce the amount of manual work it takes to deploy or upgrade systems
 # v1.0b 31 July 2023: Beta
 - Base functionalitly is feature complete
 
-# Roadmap:
-- Remove user variables from .py script and add it to a config file (I like YAML)?
-- Error and Exception handling
-- Log information to CSV?
-- Let me know if you would like to see anything additional!  
+# v1.1b 21 August 2023: Refactor
+- OOP refactor to make it easier to support more devices.  I'll keep this version at 1 Processor and 2 TLP's for simplicity.
 
 # Instructions:
 Assuming you are deploying new systems or upgrading existing rooms:
