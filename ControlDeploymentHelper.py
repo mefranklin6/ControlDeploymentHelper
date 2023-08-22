@@ -16,11 +16,10 @@ from random import randrange
 ###############################################################################
 
 
-
 #### Commonly Changed Variables ####
 
 # Names your project descriptor file, processors, and TLP's
-SystemName = 'TestRoom2' 
+SystemName = 'TestRoom' 
 
 MainProcessor_IP = '192.168.253.250'
 MainProcessor_AVLAN_IP = '192.168.254.250'
@@ -44,7 +43,6 @@ GUI_File_Directory = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate/layout
 # Default project descriptor JSON file location
 # !!!! IMPORTANT Do not have this in the root of your project file !!!!
 Default_JSON_File_Location = 'C:/Users/mefranklin/Documents/Github/VSCodeTemplate/rfile/DEFAULT.json'
-
 
 #### Backend Variables ####
 
@@ -100,49 +98,20 @@ AVLAN_Processors = [
 
 
 
-# Parent classes
-class Processor:
-    address = ''
-    AVLAN_address = ''
-    model_name = ''
-    part_number = ''
-    Has_AVLAN = bool
-
-class TLP:
-    address = ''
-    model_name = ''
-    part_number = ''
-    layout_file = ''
-
-
-# Subclasses
-class MainProcessor(Processor):
-    address = MainProcessor_IP
-
-class First_TLP(TLP):
-    address = First_TLP_IP
-
-Second_TLP_Exist = False
-if Second_TLP_IP is not None and Second_TLP_IP != '':
-    Second_TLP_Exist = True
-    class Second_TLP(TLP):
-        address = Second_TLP_IP
-
 
 def ScrapeWebInterface(ip):
     HTTP = requests.get(f'https://{ip}/www/index.html', verify=False)
     return HTTP.text
 
 
-def ExtractModelName(ip):
-    HTTP = ScrapeWebInterface(ip)
+def ExtractModelName(ip, call_type):
+    HTTP = ScrapeWebInterface(ip, call_type)
     HTTPSearch = re.search(r'var device_name =(.*?);', HTTP)
     DeviceModel = HTTPSearch.group(1).strip().replace('"', '')
     return DeviceModel
 
 
 def GetPartNumber(model_name):
-
     if model_name in ProcessorModels.keys():
         model_number = ProcessorModels[model_name]
         return model_number
@@ -154,48 +123,58 @@ def GetPartNumber(model_name):
         print(f'Can not find TLP Part Number for {model_name}')
     
 
-def GUI_Selector(tlp_model_name):
-    TLP_ModelNumberOnly = re.search(r'(\d{3,4})', tlp_model_name)
-    GUI_Files = listdir(GUI_File_Directory)
+
+
+class Processor:
     
-    for GUI_File in GUI_Files:
-        if TLP_ModelNumberOnly[1] in GUI_File:
-            return GUI_File
-	
-    if len(GUI_Files) == 1:
-        return GUI_Files[0]
-		
-
-def DecideProcessorNetworks (processor_model_name):
-    for AVLAN_Processor in AVLAN_Processors:
-        if processor_model_name in AVLAN_Processor:
-            return True
+    def __init__(self, address, avlan_address):
+        self.address = address
+        self.avlan_address = avlan_address
+        self.model_name = ExtractModelName(self.address)
+        self.part_number = GetPartNumber(self.model_name)
+        self.Has_AVLAN = self.DecideProcessorNetworks(self.model_name)
 
 
-# Function calls, load attributes into classes
-MainProcessor.model_name = ExtractModelName(MainProcessor.address)
-MainProcessor.part_number = GetPartNumber(MainProcessor.model_name)
-MainProcessor.Has_AVLAN = DecideProcessorNetworks(MainProcessor.model_name)
-if MainProcessor.Has_AVLAN == True:
-    MainProcessor.AVLAN_address = MainProcessor_AVLAN_IP
+    def DecideProcessorNetworks(self, model_name):
+        for AVLAN_Processor in AVLAN_Processors:
+            if model_name in AVLAN_Processor:
+                return True
+            return False
 
 
-def Set_TLP_ClassAttributes(tlp_sublass):
-    tlp_sublass.model_name = ExtractModelName(tlp_sublass.address)
-    tlp_sublass.part_number = GetPartNumber(tlp_sublass.model_name)
-    tlp_sublass.layout_file = GUI_Selector(tlp_sublass.model_name)
+class TLP:
 
+    def __init__(self, address):
+        self.address = address
+        self.model_name = ExtractModelName(self.address)
+        self.part_number = GetPartNumber(self.model_name)
+        self.layout_file = self.GUI_Selector(self.model_name)
     
-Set_TLP_ClassAttributes(First_TLP)
-if Second_TLP_Exist:
-    Set_TLP_ClassAttributes(Second_TLP)
+
+    def GUI_Selector(self, tlp_model_name):
+        TLP_ModelNumberOnly = re.search(r'(\d{3,4})', tlp_model_name)
+        GUI_Files = listdir(GUI_File_Directory)
+    
+        for GUI_File in GUI_Files:
+            if TLP_ModelNumberOnly[1] in GUI_File:
+                return GUI_File
+        if len(GUI_Files) == 1:
+            return GUI_Files[0]
+
+
+MainProcessor = Processor(MainProcessor_IP, MainProcessor_AVLAN_IP) 
+First_TLP = TLP(First_TLP_IP)
+
+Second_TLP_Exist = False
+if Second_TLP_IP is not None and Second_TLP_IP != '':
+    Second_TLP_Exist = True
+    Second_TLP = TLP(Second_TLP_IP)
 
 
 
 
 with open(Default_JSON_File_Location, 'r') as DefaultJSON_File:
     JSON_Data = json.load(DefaultJSON_File)
-
 
 JSON_Data['system']['name'] = SystemName
 JSON_Data['system']['system_id'] = str(randrange(1000, 9999))
@@ -206,7 +185,7 @@ JSON_Data['devices'][0]['part_number'] = MainProcessor.part_number
 JSON_Data['devices'][0]['network']['interfaces'][0]['address'] = MainProcessor.address
 
 if MainProcessor.Has_AVLAN == True:
-    JSON_Data['devices'][0]['network']['interfaces'][1]['address'] = MainProcessor.AVLAN_address
+    JSON_Data['devices'][0]['network']['interfaces'][1]['address'] = MainProcessor.avlan_address
 else:
     del(JSON_Data['devices'][0]['network']['interfaces'][1]) # if no AVLAN
 
